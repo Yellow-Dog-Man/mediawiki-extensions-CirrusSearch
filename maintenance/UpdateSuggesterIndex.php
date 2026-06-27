@@ -9,6 +9,7 @@ use CirrusSearch\Elastica\SearchAfter;
 use CirrusSearch\ElasticaErrorHandler;
 use CirrusSearch\Maintenance\Validators\AnalyzersValidator;
 use CirrusSearch\SearchConfig;
+use CirrusSearch\CirrusConfigNames;
 use Elastica;
 use Elastica\Query;
 use Elastica\Request;
