@@ -511,8 +511,14 @@ class UpdateSuggesterIndex extends Maintenance {
 		] );
 
 		$pageAndNs = new Elastica\Query\BoolQuery();
-		$pageAndNs->addShould( new Elastica\Query\Term( [ "namespace" => NS_MAIN ] ) );
-		$pageAndNs->addShould( new Elastica\Query\Term( [ "redirect.namespace" => NS_MAIN ] ) );
+		$suggesterNamespaces = $this->getSearchConfig()->get( CirrusConfigNames::SuggesterNamespaces );
+		if ( $suggesterNamespaces === null || $suggesterNamespaces === [] ) {
+			$suggesterNamespaces = [ NS_MAIN ];
+		}
+		foreach ( $suggesterNamespaces as $ns ) {
+			$pageAndNs->addShould( new Elastica\Query\Term( [ "namespace" => $ns ] ) );
+			$pageAndNs->addShould( new Elastica\Query\Term( [ "redirect.namespace" => $ns ] ) );
+		}
 		$bool = new Elastica\Query\BoolQuery();
 		$bool->addFilter( $pageAndNs );
 

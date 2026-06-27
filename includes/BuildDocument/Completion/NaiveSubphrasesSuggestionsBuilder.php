@@ -95,9 +95,9 @@ class NaiveSubphrasesSuggestionsBuilder implements ExtraSuggestionsBuilder {
 	 * @param string $suggestType (title or redirect)
 	 * @param int $score
 	 * @param \Elastica\Document $suggestDoc suggestion type (title or redirect)
-	 * @param int $targetNamespace
+	 * @param int[] $targetNamespaces
 	 */
-	public function build( array $inputDoc, $suggestType, $score, \Elastica\Document $suggestDoc, $targetNamespace ) {
+	public function build( array $inputDoc, $suggestType, $score, \Elastica\Document $suggestDoc, $targetNamespaces ) {
 		if ( $suggestType === SuggestBuilder::REDIRECT_SUGGESTION ) {
 			// It's unclear howto support redirects here.
 			// It seems hard to retrieve the best redirect if
