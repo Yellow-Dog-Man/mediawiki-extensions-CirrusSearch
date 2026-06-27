@@ -2,6 +2,7 @@
 
 namespace CirrusSearch\BuildDocument\Completion;
 
+use CirrusSearch\CirrusConfigNames;
 use CirrusSearch\Connection;
 use Elastica\Multi\Search as MultiSearch;
 use Elastica\Search;
