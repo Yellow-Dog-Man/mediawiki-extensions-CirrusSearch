@@ -12,6 +12,7 @@ use Elastica\Suggest;
 use Elastica\Suggest\Completion;
 use SearchSuggestion;
 use Wikimedia\Assert\Assert;
+use Title;
 
 /**
  * Suggest (Completion) query builder.
@@ -265,14 +266,11 @@ class CompSuggestQueryBuilder {
 					$score = $discount * $suggest['_score'];
 					$pageId = $this->searchContext->getConfig()->makePageId( $docId );
 					$suggestion = new SearchSuggestion( $score, null, null, $pageId );
-					if ( $collector->collect( $suggestion, $name, $indexName ) ) {
-						if ( $type === SuggestBuilder::TITLE_SUGGESTION && $targetTitleNS === NS_MAIN ) {
-							// For title suggestions we always use the target_title
-							// This is because we may encounter default_sort or subphrases that are not
-							// valid titles... And we prefer to display the title over close redirects
-							// for CrossNS redirect we prefer the returned suggestion
-							$suggestion->setText( $targetTitle );
 
+					if ( $collector->collect( $suggestion, $name, $indexName ) ) {
+						if ( $type === SuggestBuilder::TITLE_SUGGESTION ) {
+							$suggestion->setText( $page, false );
+							$suggestion->setSuggestedTitle( Title::makeTitle( $targetTitleNS, $targetTitle ) );
 						} else {
 							$suggestion->setText( $page );
 						}
