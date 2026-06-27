@@ -777,6 +777,12 @@
 			"value": [0]
 		},
 
+		"CirrusSearchSuggesterUseNamespaceMappings": {
+			"description": "If true, the completion suggester index builder will also read from custom index suffixes defined via $wgCirrusSearchNamespaceMappings (e.g. for custom namespaces like component, protoflux). Defaults to false.",
+			"value": false
+		},
+
+
 		"CirrusSearchCompletionSuggesterUseAltIndexId": {
 			"description": "If set the completion suggester will this alternative index id (must be present in CirrusSearchAlternateIndices).",
 			"value": null

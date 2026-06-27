@@ -869,6 +869,13 @@ class CirrusConfigNames {
 
 
 
+	/**
+	 * Name constant for the CirrusSearchSuggesterUseNamespaceMappings setting, for use with Config::get()
+	 */
+	public const SuggesterUseNamespaceMappings = 'CirrusSearchSuggesterUseNamespaceMappings';
+
+
+
 	// The following configuration variables are read by CirrusSearch but are NOT
 	// declared in extension.json (they have no registered default, are computed at
 	// runtime, or are optional profile overrides). They are listed here so this

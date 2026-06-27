@@ -228,6 +228,20 @@ class UpdateSuggesterIndex extends Maintenance {
 			Connection::CONTENT_INDEX_SUFFIX,
 			Connection::GENERAL_INDEX_SUFFIX
 		];
+
+		if ( $this->getSearchConfig()->get( CirrusConfigNames::SuggesterUseNamespaceMappings ) ) {
+			// Also include custom index suffixes from $wgCirrusSearchNamespaceMappings,
+			// so that pages in custom namespaces (e.g. component, protoflux) are
+			// considered when building the completion suggester.
+			$namespaceMappings = $this->getSearchConfig()->get( CirrusConfigNames::NamespaceMappings );
+			if ( $namespaceMappings !== null && $namespaceMappings !== [] ) {
+				$sourceIndexSuffixes = array_merge(
+					$sourceIndexSuffixes,
+					array_unique( array_values( $namespaceMappings ) )
+				);
+			}
+		}
+
 		$sourceIndexes = [];
 		foreach ( $sourceIndexSuffixes as $sourceIndexSuffix ) {
 			$sourceIndexes[$sourceIndexSuffix] = $this->getConnection()
