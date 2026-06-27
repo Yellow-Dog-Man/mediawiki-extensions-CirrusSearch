@@ -862,6 +862,13 @@ class CirrusConfigNames {
 	 */
 	public const DefaultSemanticProfile = 'CirrusSearchDefaultSemanticProfile';
 
+	/**
+	 * Name constant for the CirrusSearchSuggesterNamespaces setting, for use with Config::get()
+	 */
+	public const SuggesterNamespaces = 'CirrusSearchSuggesterNamespaces';
+
+
+
 	// The following configuration variables are read by CirrusSearch but are NOT
 	// declared in extension.json (they have no registered default, are computed at
 	// runtime, or are optional profile overrides). They are listed here so this

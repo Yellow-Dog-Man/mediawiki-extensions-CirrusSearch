@@ -784,6 +784,11 @@
 			"description": "Set of clusters CirrusSearch is allowed to maintain indices on. If unset all known clusters are used.",
 			"value": null
 		},
+		"CirrusSearchSuggesterNamespaces": {
+			"description": "List of namespace IDs to include in the completion suggester index. Defaults to NS_MAIN only.",
+			"value": [0]
+		},
+
 		"CirrusSearchCompletionSuggesterUseAltIndexId": {
 			"description": "If set the completion suggester will this alternative index id (must be present in CirrusSearchAlternativeIndices).",
 			"value": null
