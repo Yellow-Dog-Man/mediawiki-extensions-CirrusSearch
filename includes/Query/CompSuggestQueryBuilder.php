@@ -12,7 +12,7 @@ use Elastica\Suggest;
 use Elastica\Suggest\Completion;
 use SearchSuggestion;
 use Wikimedia\Assert\Assert;
-use Title;
+use MediaWiki\Title\Title;
 
 /**
  * Suggest (Completion) query builder.
