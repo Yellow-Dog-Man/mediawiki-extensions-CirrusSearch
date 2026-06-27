@@ -87,20 +87,21 @@ class SuggestBuilder {
 	private $extraBuilders;
 
 	/**
-	 * NOTE: Currently a fixed value because the completion suggester does not support
-	 * multi namespace suggestion.
+	 * Namespaces to include in the completion suggester index.
 	 *
-	 * @var int
+	 * @var int[]
 	 */
-	private $targetNamespace = NS_MAIN;
+	private array $targetNamespaces = [NS_MAIN];
 
 	/**
 	 * @param SuggestScoringMethod $scoringMethod the scoring function to use
 	 * @param ExtraSuggestionsBuilder[] $extraBuilders set of extra builders
+	 * @param int[] $targetNamespaces list of namespace IDs to include in the suggester
 	 */
-	public function __construct( SuggestScoringMethod $scoringMethod, array $extraBuilders = [] ) {
+	public function __construct( SuggestScoringMethod $scoringMethod, array $extraBuilders = [], array $targetNamespaces = [NS_MAIN] ) {
 		$this->scoringMethod = $scoringMethod;
 		$this->extraBuilders = $extraBuilders;
+		$this->targetNamespaces = $targetNamespaces;
 		$this->batchId = time();
 	}
 
@@ -116,6 +117,11 @@ class SuggestBuilder {
 		$scoreMethodName = $scoreMethodName ?: $config->get( 'CirrusSearchCompletionDefaultScore' );
 		$scoreMethod = SuggestScoringMethodFactory::getScoringMethod( $scoreMethodName );
 
+		$targetNamespaces = $config->get( CirrusConfigNames::SuggesterNamespaces );
+		if ( $targetNamespaces === null || $targetNamespaces === [] ) {
+			$targetNamespaces = [ NS_MAIN ];
+		}
+
 		$extraBuilders = [];
 		if ( $config->get( 'CirrusSearchCompletionSuggesterUseDefaultSort' ) ) {
 			$extraBuilders[] = new DefaultSortSuggestionsBuilder();
@@ -125,7 +131,7 @@ class SuggestBuilder {
 			$extraBuilders[] = NaiveSubphrasesSuggestionsBuilder::create( $subPhrasesConfig );
 		}
 		$scoreMethod->setMaxDocs( self::fetchMaxDoc( $connection, $indexBaseName ) );
-		return new self( $scoreMethod, $extraBuilders );
+		return new self( $scoreMethod, $extraBuilders, $targetNamespaces );
 	}
 
 	/**
@@ -147,7 +153,7 @@ class SuggestBuilder {
 				// Bad doc, nothing to do here.
 				continue;
 			}
-			if ( $inputDoc['namespace'] == $this->targetNamespace ) {
+			if ( in_array( $inputDoc['namespace'], $this->targetNamespaces ) ) {
 				if ( !isset( $inputDoc['title'] ) ) {
 					// Bad doc, nothing to do here.
 					continue;
@@ -163,7 +169,7 @@ class SuggestBuilder {
 					if ( !isset( $redir['namespace'] ) || !isset( $redir['title'] ) ) {
 						continue;
 					}
-					if ( $redir['namespace'] != $this->targetNamespace ) {
+					if ( !in_array( $redir['namespace'], $this->targetNamespaces ) ) {
 						continue;
 					}
 					$score = $this->scoringMethod->score( $inputDoc );
@@ -344,7 +350,7 @@ class SuggestBuilder {
 
 		$suggestDoc = new \Elastica\Document( self::encodeDocId( $suggestionType, $docId ), $doc );
 		foreach ( $this->extraBuilders as $builder ) {
-			$builder->build( $inputDoc, $suggestionType, $score, $suggestDoc, $this->targetNamespace );
+			$builder->build( $inputDoc, $suggestionType, $score, $suggestDoc, $this->targetNamespaces );
 		}
 		if ( $scoreExplanation !== null ) {
 			$suggestDoc->set( 'score_explanation', $scoreExplanation );
@@ -393,7 +399,7 @@ class SuggestBuilder {
 			foreach ( $doc['redirect'] as $redir ) {
 				// Avoid suggesting/displaying non existent titles
 				// in the target namespace
-				if ( $redir['namespace'] == $this->targetNamespace ) {
+				if ( in_array( $redir['namespace'], $this->targetNamespaces ) ) {
 					$redirects[] = $redir['title'];
 				}
 			}
@@ -507,10 +513,10 @@ class SuggestBuilder {
 	}
 
 	/**
-	 * @return int the target namespace
+	 * @return int[] the target namespaces
 	 */
-	public function getTargetNamespace() {
-		return $this->targetNamespace;
+	public function getTargetNamespaces() {
+		return $this->targetNamespaces;
 	}
 
 	/**

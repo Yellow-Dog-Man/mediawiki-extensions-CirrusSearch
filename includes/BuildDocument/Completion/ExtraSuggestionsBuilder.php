@@ -17,9 +17,9 @@ interface ExtraSuggestionsBuilder {
 	 * @param string $suggestType (title or redirect)
 	 * @param int $score
 	 * @param \Elastica\Document $suggestDoc suggestion type (title or redirect)
-	 * @param int $targetNamespace
+	 * @param int[] $targetNamespaces
 	 */
-	public function build( array $inputDoc, $suggestType, $score, \Elastica\Document $suggestDoc, $targetNamespace );
+	public function build( array $inputDoc, $suggestType, $score, \Elastica\Document $suggestDoc, $targetNamespaces );
 
 	/**
 	 * The fields needed by this extra builder.
