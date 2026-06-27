@@ -32,10 +32,10 @@ class DefaultSortSuggestionsBuilder implements ExtraSuggestionsBuilder {
 	 * @param string $suggestType (title or redirect)
 	 * @param int $score
 	 * @param \Elastica\Document $suggestDoc suggestion type (title or redirect)
-	 * @param int $targetNamespace
+	 * @param int[] $targetNamespaces
 	 */
-	public function build( array $inputDoc, $suggestType, $score, \Elastica\Document $suggestDoc, $targetNamespace ) {
-		if ( $targetNamespace != $inputDoc['namespace'] ) {
+	public function build( array $inputDoc, $suggestType, $score, \Elastica\Document $suggestDoc, $targetNamespaces ) {
+		if ( !in_array( $inputDoc['namespace'], $targetNamespaces ) ) {
 			// This is a cross namespace redirect, we don't
 			// add defaultsort for this one.
 			return;
